@@ -1,0 +1,48 @@
+$date
+	Mon May 31 21:25:07 2021
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module little_test $end
+$scope module alu $end
+$var wire 8 ! A [7:0] $end
+$var wire 8 " B [7:0] $end
+$var wire 4 # op [3:0] $end
+$var wire 2 $ cc [1:0] $end
+$var wire 8 % E [7:0] $end
+$upscope $end
+$upscope $end
+$scope module little_test $end
+$var reg 1 & clk $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+1&
+bx %
+bx $
+bx #
+bx "
+bx !
+$end
+#50
+0&
+#60
+b11 %
+b0 #
+b0 $
+b10 "
+b1 !
+#100
+1&
+#150
+0&
+#200
+1&
+#250
+0&
+#260
