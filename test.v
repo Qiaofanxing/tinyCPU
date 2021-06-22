@@ -27,8 +27,11 @@ module test;
 	always @(negedge clk) begin
 		if (rst_&&(`ins==`HLT)) #(CYCLE+0.1) $finish; //结束当前仿真
 		$write("%3d: ",$stime); //显示出仿真时间
-		for(i=0;i<32;i=i+1)
-			if(ram.mem[i]!==8'hxx) $write(" %c ",ram.mem[i]); 
+		//for(i=0;i<32;i=i+1)
+		//	if(ram.mem[i]!==8'hxx) $write(" %c ",ram.mem[i]); 
+		//	else $write(" .  ");  //如果是不确定值，输出一个·
+		for(i=0;i<=7;i=i+1)
+			if(cpu.regfile.rf[i]!==8'hxx) $write(" %d ",cpu.regfile.rf[i]); 
 			else $write(" .  ");  //如果是不确定值，输出一个·
 		$write("\n"); 
 		end
@@ -36,6 +39,14 @@ module test;
 	initial begin    
 		$dumpfile("test.vcd");
 		$dumpvars;
+		cpu.regfile.rf[0] = 0;
+		cpu.regfile.rf[1] = 1;
+		cpu.regfile.rf[2] = 2;
+		cpu.regfile.rf[3] = 3;
+		cpu.regfile.rf[4] = 4;
+		cpu.regfile.rf[5] = 5;
+		cpu.regfile.rf[6] = 6;
+		cpu.regfile.rf[7] = 8'b11111111;
 		$readmemh("ram.txt",ram.mem,0,255);   //16进制
 		$readmemh("rom.txt",rom.mem,0,255);   //16进制
 		clk=1'b1; 

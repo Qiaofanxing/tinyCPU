@@ -7,6 +7,12 @@
 `define HLT		4'hf    //4'hf—>1111，停机指令
 `define NOP     4'h0	//0000 空指令
 
+
+`define PUSH 4'h6     //PUSH
+`define POP 4'h7   //POP
+`define CALL 4'h8  //CALL
+`define RET 4'h9  //RET
+
 //下面是低四位表示指令功能码
 
 //OPR与ORI功能码定义
