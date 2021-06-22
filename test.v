@@ -23,8 +23,9 @@ module test;
 	
 	integer i;
 
-	//每到时钟的下降沿(时钟周期的中间时刻)，把内存中前32位的值输出一遍:
+	//每到时钟的下降沿(时钟周期的中间时刻)，把寄存器的值输出一遍:
 	always @(negedge clk) begin
+//	always @(posedge  clk) begin	
 		if (rst_&&(`ins==`HLT)) #(CYCLE+0.1) $finish; //结束当前仿真
 		$write("%3d: ",$stime); //显示出仿真时间
 		//for(i=0;i<32;i=i+1)

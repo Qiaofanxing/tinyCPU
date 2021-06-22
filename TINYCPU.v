@@ -28,9 +28,9 @@ module TINYCPU(
 //取指阶段	
 	PC pc( .new_pc(new_pc),.pc(rom_addr),.clk(clk),.rst_(rst_)); //实例化一个PC寄存器
 
-	//valC在其他指令中是第三个字节，在JMP中是第二个字节:
+	//valC在其他指令中是第三个字节，在JMP,CALL中是第二个字节:
 	assign valC = ((`ins==`JXX && `fun==`JMP)||`ins==`CALL)? rom_data[15:8]: rom_data[7:0];  //如果取出来了一个无条件转移指令，输出第二个字节，否则其他的是第三个字节
-	//指令大部分为3字节指令,HLT和NOP是单字节，JMP是2字节。HLT为停机指令，不再增加。
+	//指令大部分为3字节指令,HLT和NOP是单字节，JMP与call是2字节。HLT为停机指令，不再增加。
 	assign valP = rom_addr + ((`ins==`HLT )? 0:
 						 (`ins==`NOP||`ins==`RET)? 1: 
 						 ((`ins==`JXX && `fun==`JMP)||`ins==`CALL)? 2: 3);  //下一条指令的地址
@@ -58,16 +58,15 @@ module TINYCPU(
 	ALU alu(.A(aluA),.B(aluB),.op(`fun),.E(valE),.cc(cc));   //实例化一个运算器
 	//错误的代码(比如转移指令)也会使用ALU并计算出一个错误的结果，但是不会使用到，只有运算指令才会使用到ALU的结果
 //访存阶段(读写RAM):
-	//只有LD和ST指令需要访存
 	assign ram_addr=(`ins==`POP||`ins==`RET)? valA: valE; //地址就是运算器输出的结果	
 	assign valM=ram_rdat ;  //从RAM读出来的值写到valM端口
-	assign ram_rd_ = (`ins==`LD||`ins==`POP||`ins==`RET)? 1'b0: 1'b1;			//读控信号，LD命令，rd_信号有效
-	assign ram_wr_ = (`ins==`ST||`ins==`PUSH||`ins==`CALL)? 1'b0: 1'b1;				//写控信号，ST命令，wr_信号有效 
+	assign ram_rd_ = (`ins==`LD||`ins==`POP||`ins==`RET)? 1'b0: 1'b1;			//读控信号，rd_信号有效
+	assign ram_wr_ = (`ins==`ST||`ins==`PUSH||`ins==`CALL)? 1'b0: 1'b1;				//写控信号，wr_信号有效 
 //写回阶段:
 	assign ram_wdat= (`ins==`PUSH)? valA:
-					 (`ins==`CALL)? valP: valB;  //如果是写指令(ST)
+					 (`ins==`CALL)? valP: valB;  //如果是写指令
 	assign dstM = (`ins==`LD) ? `rB : 
-				  (`ins==`POP)? `rA : 3'o0; //代替写使能信号，不是LD的话全写0，表示不写入寄存器
+				  (`ins==`POP)? `rA : 3'o0; //代替写使能信号，全写0表示不写入寄存器
 	assign dstE = (`ins==`OPR)? `rC :
 				  (`ins==`OPI) ? `rB :
 				  (`ins==`PUSH||`ins==`POP)? `rB:
